@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home page</title>
+</head>
+
+<body>
+</body>
+<script>
+    fetch('/api/session')
+        .then(response => {
+            if (response.status !== 201) {
+                document.body.innerHTML = `
+                <form action="login" method="POST" id="form">
+                    <input type="text" name="username" placeholder="Username">
+                    <input type="password" name="password" placeholder="Password">
+                    <button type="submit">Login</button>
+                </form>
+                `
+                document.getElementById('form').addEventListener('submit', (e) => {
+                    e.preventDefault()
+                    const username = e.target.username.value
+                    const password = e.target.password.value
+                    fetch('/api/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            username,
+                            password
+                        })
+                    })
+                        .then(response => {
+                            if (response.status === 201) {
+                                document.innerHTML = `
+                                <h1>Logged in</h1>
+                                `
+                            } else {
+                                alert('Login failed')
+                            }
+                        })
+                })
+            } else {
+                document.body.innerHTML = `
+                <h1>Logged in</h1>
+                `
+            }
+        })
+</script>
+
+</html>
